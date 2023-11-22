@@ -1,13 +1,15 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset, random_split
 from sklearn.model_selection import train_test_split
 import torchvision.transforms as transforms
 import numpy as np
 
 
 import deeplake
+from torchvision import datasets
+
 ds = deeplake.load('hub://activeloop/11k-hands')
 
 height, width = 800, 800
@@ -50,25 +52,23 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 
-tform = transforms.Compose([
-    transforms.ToPILImage(), # Must convert to PIL image for subsequent operations to run
-    # transforms.Resize(800),
-    transforms.RandomRotation(20), # Image augmentation
-    transforms.ToTensor(), # Must convert to pytorch tensor for subsequent operations to run
-    transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
+# Define a transform to normalize the data
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
 
-#PyTorch Dataloader
-dataloader=ds.pytorch(batch_size=32, num_workers=2, shuffle=True)
-# dataloader = ds.dataloader().transform({'images': tform, 'labels': None}).batch(32).shuffle().pytorch()
+# Replace 'root' with the path where your dataset is stored
+dataset = datasets.ImageFolder(root='Hands/', transform=transform)
 
-dataset_list = list(dataloader.dataset)
+# Split the dataset into train and test sets
+train_size = int(0.8 * len(dataset))
+test_size = len(dataset) - train_size
+train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
 
-# Split the list into training and testing sets
-train_size = int(0.8 * len(dataset_list))
-test_size = len(dataset_list) - train_size
-
-train_loader, test_loader = torch.utils.data.random_split(dataset_list, [train_size, test_size])
+# Create data loaders
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
 
 
 # Training loop
@@ -76,6 +76,7 @@ num_epochs = 1000
 
 for epoch in range(num_epochs):
     for inputs, labels in train_loader:
+        print(f'label: {labels}')
         optimizer.zero_grad()
         outputs = model(inputs)
         loss = criterion(outputs, labels)
