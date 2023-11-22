@@ -59,8 +59,7 @@ tform = transforms.Compose([
 ])
 
 #PyTorch Dataloader
-dataloader= ds.pytorch(batch_size = 16, num_workers = 2,
-    transform = {'images': tform, 'labels': ['hand']}, shuffle=True)
+dataloader=ds.pytorch(batch_size=16, num_workers=2, transform={'images': tform, 'labels': 'None'}, shuffle=True)
 
 dataset_list = list(dataloader.dataset)
 
