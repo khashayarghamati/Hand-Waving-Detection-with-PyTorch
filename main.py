@@ -52,7 +52,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 tform = transforms.Compose([
     transforms.ToPILImage(), # Must convert to PIL image for subsequent operations to run
-    transforms.Resize(800),
+    # transforms.Resize(800),
     transforms.RandomRotation(20), # Image augmentation
     transforms.ToTensor(), # Must convert to pytorch tensor for subsequent operations to run
     transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
