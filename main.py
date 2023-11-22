@@ -10,8 +10,6 @@ import numpy as np
 import deeplake
 from torchvision import datasets
 
-ds = deeplake.load('hub://activeloop/11k-hands')
-
 height, width = 800, 800
 # Define a simple CNN model
 class HandWaveCNN(nn.Module):
