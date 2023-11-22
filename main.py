@@ -57,7 +57,7 @@ transform = transforms.Compose([
 ])
 
 # Replace 'root' with the path where your dataset is stored
-dataset = datasets.ImageFolder(root='Hands/', transform=transform)
+dataset = datasets.ImageFolder(root='./Hands/', transform=transform)
 
 # Split the dataset into train and test sets
 train_size = int(0.8 * len(dataset))
